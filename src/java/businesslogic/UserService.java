@@ -1,45 +1,41 @@
 package businesslogic;
 
 import dataaccess.UserDB;
-import domainmodel.Role;
-import domainmodel.User;
+import domainmodel.Note;
+import java.util.Date;
+
 import java.util.List;
 
 public class UserService {
 
-    private UserDB userDB;
+    private UserDB noteDB;
 
     public UserService() {
-        userDB = new UserDB();
+        noteDB = new UserDB();
     }
 
-    public User get(String username) throws Exception {
-        return userDB.getUser(username);
+    public Note get(int noteId) throws Exception {
+        return noteDB.getNote(noteId);
     }
 
-    public List<User> getAll() throws Exception {
-        return userDB.getAll();
+    public List<Note> getAll() throws Exception {
+        return noteDB.getAll();
     }
 
-    public int update(String username, String password, String email, boolean active, String firstname, String lastname) throws Exception {
-        User user = userDB.getUser(username);
-        user.setPassword(password);
-        user.setActive(active);
-        user.setEmail(email);
-        user.setFirstname(firstname);
-        user.setLastname(lastname);
-        return userDB.update(user);
+    public int update(int noteId, String contents) throws Exception {
+        Note note = noteDB.getNote(noteId);
+        note.setContents(contents);
+        return noteDB.update(note);
     }
 
-    public int delete(String username) throws Exception {
-        User deletedUser = userDB.getUser(username);
-        return userDB.delete(deletedUser);
+    public int delete(int noteId) throws Exception {
+         Note note = noteDB.getNote(noteId);
+        return noteDB.delete(note);
     }
 
-    public int insert(String username, String password, String email, boolean active, String firstname, String lastname) throws Exception {
-        User user = new User(username, password, email, active, firstname, lastname);
-        Role role = new Role(2);
-        user.setRole(role);
-        return userDB.insert(user);
+    public int insert(int noteId, String contents) throws Exception {
+       Date dateCreated = new Date();
+        Note note = new Note(noteId,dateCreated,contents);
+        return noteDB.insert(note);
     }
 }

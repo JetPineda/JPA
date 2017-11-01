@@ -1,7 +1,8 @@
 package servlets;
 
 import businesslogic.UserService;
-import domainmodel.User;
+import domainmodel.Note;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
@@ -20,22 +21,24 @@ public class UserServlet extends HttpServlet {
         UserService us = new UserService();
         String action = request.getParameter("action");
         if (action != null && action.equals("view")) {
-            String selectedUsername = request.getParameter("selectedUsername");
+            String selectedNoteId = request.getParameter("selectedNoteId");
+            int noteId = Integer.parseInt(selectedNoteId);
             try {
-                User user = us.get(selectedUsername);
-                request.setAttribute("selectedUser", user);
+                Note note = us.get(noteId);
+                request.setAttribute("selectedNote", note);
             } catch (Exception ex) {
                 Logger.getLogger(UserServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
+            
         }
         
-        List<User> users = null;        
+        List<Note> notes = null;        
         try {
-            users = us.getAll();
+            notes = us.getAll();
         } catch (Exception ex) {
             Logger.getLogger(UserServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
-        request.setAttribute("users", users);
+        request.setAttribute("notes", notes);
         getServletContext().getRequestDispatcher("/WEB-INF/users.jsp").forward(request, response);
     }
 
@@ -44,35 +47,37 @@ public class UserServlet extends HttpServlet {
             throws ServletException, IOException {
 
         String action = request.getParameter("action");
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
-        String email = request.getParameter("email");
-        String firstname = request.getParameter("firstname");
-        String lastname = request.getParameter("lastname");
-        boolean active = request.getParameter("active") != null;
-
+        String selectedNoteId = request.getParameter("selectedNoteId");
+        String contents = request.getParameter("contents");
         UserService us = new UserService();
+        int noteId;
+        
+         if(selectedNoteId == null ||selectedNoteId.isEmpty()){
+            noteId = 0;
+        } else {
+            noteId = Integer.parseInt(selectedNoteId);
+        }
+
 
         try {
             if (action.equals("delete")) {
-                String selectedUsername = request.getParameter("selectedUsername");
-                us.delete(selectedUsername);
+                us.delete(noteId);
             } else if (action.equals("edit")) {
-                us.update(username, password, email, active, firstname, lastname);
+                us.update(noteId,contents);
             } else if (action.equals("add")) {
-                us.insert(username, password, email, active, firstname, lastname);
+                us.insert(noteId,contents);
             }
         } catch (Exception ex) {
             request.setAttribute("errorMessage", "Whoops.  Could not perform that action.");
         }
         
-        List<User> users = null;
+        List<Note> notes = null;
         try {
-            users = us.getAll();
+            notes = us.getAll();
         } catch (Exception ex) {
             Logger.getLogger(UserServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
-        request.setAttribute("users", users);
+        request.setAttribute("notes", notes);
         getServletContext().getRequestDispatcher("/WEB-INF/users.jsp").forward(request, response);
     }
 }

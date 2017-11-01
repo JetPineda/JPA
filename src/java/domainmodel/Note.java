@@ -10,12 +10,9 @@ import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -25,16 +22,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author awarsyle
+ * @author 686623
  */
 @Entity
 @Table(name = "note")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Note.findAll", query = "SELECT n FROM Note n")
-    , @NamedQuery(name = "Note.findByNoteID", query = "SELECT n FROM Note n WHERE n.noteID = :noteID")
+    , @NamedQuery(name = "Note.findByNoteId", query = "SELECT n FROM Note n WHERE n.noteId = :noteId")
     , @NamedQuery(name = "Note.findByDateCreated", query = "SELECT n FROM Note n WHERE n.dateCreated = :dateCreated")
-    , @NamedQuery(name = "Note.findByTitle", query = "SELECT n FROM Note n WHERE n.title = :title")
     , @NamedQuery(name = "Note.findByContents", query = "SELECT n FROM Note n WHERE n.contents = :contents")})
 public class Note implements Serializable {
 
@@ -42,42 +38,49 @@ public class Note implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "NoteID")
-    private Integer noteID;
+    @Column(name = "noteId")
+    private Integer noteId;
     @Basic(optional = false)
-    @Column(name = "DateCreated")
+    @Column(name = "dateCreated")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateCreated;
     @Basic(optional = false)
-    @Column(name = "Title")
-    private String title;
-    @Basic(optional = false)
-    @Column(name = "Contents")
+    @Column(name = "contents")
     private String contents;
-    @JoinColumn(name = "Owner", referencedColumnName = "Username")
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
-    private User owner;
 
-    public Note() {
-    }
-
-    public Note(Integer noteID) {
-        this.noteID = noteID;
-    }
-
-    public Note(Integer noteID, Date dateCreated, String title, String contents) {
-        this.noteID = noteID;
+   public Note(){};
+    
+    
+    public Note(int noteId, Date dateCreated, String contents  ){
+        
+        this.noteId = noteId;
         this.dateCreated = dateCreated;
-        this.title = title;
+        this.contents = contents;
+    }
+    
+    public Note(int noteId, String contents){
+        this.noteId = noteId;
+        this.contents = contents;
+    }
+    
+    public Note(String contents){
+        this.contents = contents;
+    }
+    
+    public String getContents() {
+        return contents;
+    }
+
+    public void setContents(String contents) {
         this.contents = contents;
     }
 
-    public Integer getNoteID() {
-        return noteID;
+    public int getNoteId() {
+        return noteId;
     }
 
-    public void setNoteID(Integer noteID) {
-        this.noteID = noteID;
+    public void setNoteId(int noteId) {
+        this.noteId = noteId;
     }
 
     public Date getDateCreated() {
@@ -87,35 +90,12 @@ public class Note implements Serializable {
     public void setDateCreated(Date dateCreated) {
         this.dateCreated = dateCreated;
     }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
-    public User getOwner() {
-        return owner;
-    }
-
-    public void setOwner(User owner) {
-        this.owner = owner;
-    }
+   
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (noteID != null ? noteID.hashCode() : 0);
+        hash += (noteId != null ? noteId.hashCode() : 0);
         return hash;
     }
 
@@ -126,7 +106,7 @@ public class Note implements Serializable {
             return false;
         }
         Note other = (Note) object;
-        if ((this.noteID == null && other.noteID != null) || (this.noteID != null && !this.noteID.equals(other.noteID))) {
+        if ((this.noteId == null && other.noteId != null) || (this.noteId != null && !this.noteId.equals(other.noteId))) {
             return false;
         }
         return true;
@@ -134,7 +114,7 @@ public class Note implements Serializable {
 
     @Override
     public String toString() {
-        return "domainmodel.Note[ noteID=" + noteID + " ]";
+        return "domainmodel.Note[ noteId=" + noteId + " ]";
     }
     
 }
